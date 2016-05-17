@@ -34,7 +34,7 @@ app.get('/todos', function(req,res){
 		&& queryParams.q.length > 0){
 
 		filteredTodos = _.filter(filteredTodos, function(todo){
-			return todo.indexOf(queryParams.q) >-1;
+			return todo.description.indexOf(queryParams.q) >-1;
 
 		})
 	}
@@ -44,7 +44,7 @@ app.get('/todos', function(req,res){
 
 
 
-	res.json(filteredTodos)
+	res.json(filteredTodos);
 });
 
 
@@ -66,30 +66,24 @@ app.get('/todos/:id', function(req,res){
 
 
 
-//POST
-app.post('/todos', function(req, res){
-	
-	var body = _.pick(req.body, "description", "completed");
-	body.description = body.description.trim();
+// POST /todos
+app.post('/todos', function (req, res) {
+	var body = _.pick(req.body, 'description', 'completed');
 
-	if(!_.isBoolean(body.completed) 
-		|| !_.isString(body.description)
-		|| body.description.trim().length === 0) {
-		console.log('failed');
+	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
 		return res.status(400).send();
 	}
 
+	body.description = body.description.trim();	
+	body.id = todoNextId++;
 
-
-	console.log('description ' + body.description);
-	res.json(body);
-
-	//add body to todo array
-	body.id = todoNextId;
-	todoNextId++;
 	todos.push(body);
-
+	
+	res.json(body);
 });
+
+
+
 
 //DELETE /todos/:id
 app.delete('/todos/:id', function(req, res){
