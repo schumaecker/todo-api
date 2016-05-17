@@ -15,6 +15,7 @@ app.get('/', function(req,res){
 	res.send('Todo API Root');
 });
 
+//GET TODOS 
 app.get('/todos', function(req,res){
 	
 	var queryParams = req.query;
@@ -28,13 +29,28 @@ app.get('/todos', function(req,res){
 		filteredTodos = _.where(filteredTodos, {completed: false});
 	}
 
+	if(queryParams.hasOwnProperty('q')
+		&& typeof queryParams.q === 'string'
+		&& queryParams.q.length > 0){
+
+		filteredTodos = _.filter(filteredTodos, function(todo){
+			return todo.indexOf(queryParams.q) >-1;
+
+		})
+	}
+
+
+
+
+
+
 	res.json(filteredTodos)
 });
 
 
 
 
-//GET
+//GET 
 app.get('/todos/:id', function(req,res){
 
 	var toDoId = parseInt(req.params.id, 10);
@@ -54,15 +70,13 @@ app.get('/todos/:id', function(req,res){
 app.post('/todos', function(req, res){
 	
 	var body = _.pick(req.body, "description", "completed");
-	//use _.pick to only pick description and completed
-	//set body description to trim value
 	body.description = body.description.trim();
 
 	if(!_.isBoolean(body.completed) 
 		|| !_.isString(body.description)
 		|| body.description.trim().length === 0) {
 		console.log('failed');
-			return res.status(400).send();
+		return res.status(400).send();
 	}
 
 
