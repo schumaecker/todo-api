@@ -1,1 +1,3 @@
 node-modules/
+*sqlite/
+database-play/
